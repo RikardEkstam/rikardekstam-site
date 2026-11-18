@@ -1,6 +1,5 @@
 import { defineConfig } from '@playwright/test';
 
-if (!process.env.PREVIEW_URL) throw new Error('Set PREVIEW_URL to the running site URL.');
 export default defineConfig({
   testDir: './tests/browser',
   workers: 1,

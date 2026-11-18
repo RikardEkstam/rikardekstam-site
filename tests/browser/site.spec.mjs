@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.mjs';
 import AxeBuilder from '@axe-core/playwright';
 
 for (const width of [375, 768, 1280, 1440]) {
@@ -19,7 +19,7 @@ for (const width of [375, 768, 1280, 1440]) {
         expect(await image.evaluate(img => img.naturalWidth)).toBeGreaterThan(0);
       }
       const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-      expect(results.violations).toEqual([]);
+      expect(results.violations.map(({ id, nodes }) => ({ id, nodes: nodes.map(({ target, failureSummary }) => ({ target, failureSummary })) })), path).toEqual([]);
     }
     await page.goto('/');
     await page.keyboard.press('Tab');
