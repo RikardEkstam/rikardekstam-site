@@ -1,0 +1,5 @@
+---
+interface Props { small?: boolean }
+const { small = false } = Astro.props;
+---
+<span class:list={['stripes', { small }]} aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>

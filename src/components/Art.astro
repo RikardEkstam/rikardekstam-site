@@ -1,0 +1,7 @@
+---
+import sheet from '../assets/brand-art.webp';
+interface Props { scene: 'desk' | 'plant' | 'server' | 'space' | 'notebook' | 'mountain' | 'gear'; label?: string; class?: string }
+const { scene, label, class: className } = Astro.props;
+const art = sheet;
+---
+<div class:list={['brand-art', `art-${scene}`, className]} style={`--art: url('${art.src}')`} role={label ? 'img' : undefined} aria-label={label} aria-hidden={label ? undefined : 'true'}></div>

@@ -1,0 +1,8 @@
+---
+import Base from '../layouts/Base.astro';
+import { now } from '../data/now';
+import { formatDate } from '../lib/content';
+---
+<Base title="Now" description="What’s on my workbench right now — current focus, experiments and things taking shape.">
+<div class="page-wrap interior"><header class="page-intro"><p class="eyebrow"><span class="status-dot"></span> A SNAPSHOT, NOT A ROADMAP</p><h1>ON THE<br /><span>WORKBENCH.</span></h1><p class="lead">What has my attention right now.</p><p class="muted">Last updated <time datetime={now.updated}>{formatDate(new Date(now.updated))}</time></p></header><div class="now-grid"><article class="prose"><h2>{now.title}</h2><p>{now.description}</p><p>The starting point is simple: a personal site that feels like a workbench. Somewhere to bring projects together, write down the useful bits, and share the occasional experiment.</p><h2>Room to grow</h2><p>Longer technical articles will live alongside shorter project notes. For now, I’m working on the foundations and deciding what to put on the bench first.</p></article><aside class="focus-panel"><p class="eyebrow">CURRENT FOCUS</p><ol>{now.items.map((item, index) => <li><span>0{index + 1}</span>{item}</li>)}</ol><p class="muted">Updated by hand, when things change.</p></aside></div></div>
+</Base>

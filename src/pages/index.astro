@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import Stripes from '../components/Stripes.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Art from '../components/Art.astro';
+import BrandIcon from '../components/BrandIcon.astro';
+import { publishedContent, updateUrl } from '../lib/content';
+import { demoProjects, demoUpdates, demoBrands } from '../data/design-preview';
+import { site } from '../config';
+import { now } from '../data/now';
+const { projects, journal, updates } = await publishedContent();
+const featured = projects.filter(p => p.data.featured).slice(0, 3);
+const latest = [...journal.map(p => ({ title: p.data.title, description: p.data.description, date: p.data.date, url: `/journal/${p.id}/` })), ...updates.map(p => ({ title: p.data.title, description: p.data.description, date: p.data.date, url: updateUrl(p.id, p.data.project.id) }))].sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, 3);
+---
+<Base>
+  <div class="reference-canvas">
+    <section class="ref-hero" aria-labelledby="hero-title">
+      <div class="ref-hero-picture"><Art scene="desk" label="Illustration of a warm maker’s desk, with a laptop, plant, notebook and coffee" /></div>
+      <div class="ref-hero-copy">
+        <h1 id="hero-title">I BUILD STUFF.</h1>
+        <p class="ref-tagline"><span>Some for fun. Some for profit.</span></p>
+        <p class="ref-intro">Products, companies, stories and experiments.<br />Sharing what happens along the way.</p>
+        <div class="ref-actions"><a class="ref-button ref-button-orange" href={projects.length ? '/projects/' : site.designPreview ? '#projects' : '/now/'}>Explore projects <span aria-hidden="true">→</span></a><a class="ref-button ref-button-outline" href="/about/#contact">Build something together <span aria-hidden="true">→</span></a></div>
+        <Stripes small />
+      </div>
+    </section>
+    <div class="ref-content">
+      <div class="ref-main-row">
+        {(featured.length > 0 || site.designPreview) && <section id="projects" class="ref-projects"><SectionTitle title="Featured projects" /><div class="ref-project-grid">{featured.length ? featured.map(project => <ProjectCard project={project} />) : demoProjects.map(project => <button class="ref-project demo-trigger" type="button" data-title={project.title} data-description={project.description}><h3>{project.title}</h3><div class="ref-project-frame"><div class="ref-project-inner"><Art scene={project.scene} /><div class="ref-project-copy"><p>{project.description}</p><span class="demo-label">Demo</span><span class="ref-card-arrow" aria-hidden="true">→</span></div></div></div></button>)}</div></section>}
+        <section id="updates" class="ref-updates"><SectionTitle title={latest.length || site.designPreview ? 'Latest updates' : 'On the workbench'} /><div class="ref-updates-list">{latest.length ? latest.map(item => <a class="ref-update" href={item.url}><span class="ref-update-icon" aria-hidden="true">↗</span><Art scene="notebook" /><div><h3>{item.title}</h3><p>{item.description}</p></div><span class="ref-update-arrow" aria-hidden="true">→</span></a>) : site.designPreview ? demoUpdates.map(update => <button class="ref-update demo-trigger" type="button" data-title={update.title} data-description={update.description}><span class:list={['ref-update-icon', update.icon]} aria-hidden="true">{update.icon === 'video' ? <svg viewBox="0 0 32 28"><rect x="1" y="3" width="30" height="22" rx="6" fill="#ef1313"/><path d="m13 8 10 6-10 6Z" fill="white" /></svg> : update.icon === 'book' ? <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 6C11 2 6 3 2 4v22c5-2 10-1 14 3 4-4 9-5 14-3V4c-4-1-9-2-14 2Zm0 0v23"/></svg> : <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.7"><path d="m10 7-8 9 8 9m12-18 8 9-8 9m-4-22-5 26"/></svg>}</span><Art scene={update.scene} /><div class="ref-update-copy"><h3>{update.title}</h3><p>{update.description}</p><span class="demo-label">Demo</span></div><span class="ref-update-arrow" aria-hidden="true">→</span></button>) : <a href="/now/" class="ref-update ref-now"><Art scene="notebook" /><div><h3>{now.title}</h3><p>{now.description}</p></div><span aria-hidden="true">→</span></a>}</div></section>
+      </div>
+      <div class:list={['ref-bottom-row', { 'without-companies': !site.designPreview }]}>
+        {site.designPreview && <section id="companies" class="ref-companies"><SectionTitle title="Companies & IP" /><div class="ref-company-grid">{demoBrands.map(brand => <button class="ref-company demo-trigger" type="button" data-title={brand.title} data-description={brand.description}><div class="ref-company-inner"><BrandIcon name={brand.icon} /><h3>{brand.title}</h3><p>{brand.description}</p><span class="demo-label">Demo</span></div></button>)}</div></section>}
+        <section class="ref-about"><SectionTitle title="About" /><div class="ref-about-body"><div class="ref-about-image"><Art scene="gear" /></div><div class="ref-about-copy"><h3>I’m Rikard Ekstam — a technical builder at heart.</h3><p>I work at the intersection of tech, design, product, creation and exploration — turning ideas into real things and sharing the journey along the way.</p><ul><li>Build and experiment with products and systems</li><li>Design, create and tell meaningful stories</li><li>Explore ideas, tools and new possibilities</li></ul></div></div></section>
+      </div>
+    </div>
+  </div>
+  {site.designPreview && <dialog class="demo-dialog" aria-labelledby="demo-title"><button class="dialog-close" type="button" aria-label="Close design example">×</button><p class="eyebrow">DESIGN EXAMPLE</p><h2 id="demo-title"></h2><p class="demo-description"></p><p class="demo-explanation">This is illustrative content from the design reference, not a published project, company or update. It will be replaced with real content before launch.</p><a class="ref-button ref-button-orange" href="/now/">See what’s actually in progress →</a></dialog>}
+</Base>
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('.demo-dialog');
+  let opener: HTMLButtonElement | null = null;
+  document.querySelectorAll<HTMLButtonElement>('.demo-trigger').forEach(button => button.addEventListener('click', () => {
+    if (!dialog) return;
+    opener = button;
+    dialog.querySelector('#demo-title')!.textContent = button.dataset.title || '';
+    dialog.querySelector('.demo-description')!.textContent = button.dataset.description || '';
+    dialog.showModal();
+  }));
+  dialog?.querySelector('.dialog-close')?.addEventListener('click', () => dialog.close());
+  dialog?.addEventListener('close', () => opener?.focus());
+  dialog?.addEventListener('click', event => {
+    const rect = dialog.getBoundingClientRect();
+    if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) dialog.close();
+  });
+</script>
