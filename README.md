@@ -38,9 +38,9 @@ The secondary-page illustrative workspace image is from [Unsplash](https://unspl
 
 ## GitHub and Vercel
 
-Target repository: private `RikardEkstam/rikardekstam-site`; branch `main`. Connect that repo to the Vercel project with the Astro preset, Node 24, install command `npm ci`, build command `npm run build`, output `dist`. Non-main branches create previews; main publishes the temporary production address. Source visibility should stay private.
+Repository: public `RikardEkstam/rikardekstam-site`; branch `main`, as created by the owner. The initial Vercel releases were uploaded directly; a Git push does not by itself establish automatic deployments. To enable them, connect this repo to the existing Vercel project with the Astro preset, Node 24, install command `npm ci`, build command `npm run build`, output `dist`. Once connected and configured, non-main branches can create previews and main can publish the temporary production address.
 
-The Actions workflow runs type checks, static build and isolated content integration tests. Configure its `verify` check as required on main when repository settings are available. Vercel builds through the Git integration; no deployment token belongs in this repo.
+The Actions workflow runs type checks, static build and isolated content integration tests. Configure its `verify` check as required on main when repository settings are available. Verify the Vercel Git connection before relying on automatic deployments; no deployment token belongs in this repo.
 
 Default build settings: `SITE_URL=https://rikardekstam-site.vercel.app`, `SITE_INDEXABLE=false`. Set `SITE_URL` to the actual assigned project alias if it differs. Leave previews unindexed. Noindex controls search indexing, not access; do not put private content in a public build.
 
@@ -57,3 +57,12 @@ Default build settings: `SITE_URL=https://rikardekstam-site.vercel.app`, `SITE_I
 `npm run verify` checks types and static generation, then builds an isolated temporary content fixture: a published project/article/update, draft entries, draft-project dependencies and an invalid reference. Fixtures never enter the deployable source content or the final build.
 
 `npm run build && npm run test:browser` checks navigation, responsive overflow, image loading, keyboard access and WCAG A/AA issues against the built site using a temporary local HTTP fixture. Set `PREVIEW_URL=https://your-preview.example` to check a deployed site instead. Local managed preview uses `sites-preview start /workspace/rikardekstam-site`; reuse its exact URL. Browser checks use the installed Chromium when `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` is set.
+
+## Reusable agent skills
+
+Two portable skills capture the workflows developed for this site:
+
+- [reference-faithful-ui](.agents/skills/reference-faithful-ui/SKILL.md): implement or correct a UI against a supplied design reference, including responsive and tall-viewport behavior.
+- [astro-static-release](.agents/skills/astro-static-release/SKILL.md): verify static content publication, push source to GitHub and release to the intended Vercel project.
+
+Each folder contains a `SKILL.md` with name and description metadata plus supporting references. In clients that discover repository skills from `.agents/skills`, invoke them with `$reference-faithful-ui` or `$astro-static-release`. Otherwise, ask the agent to read the linked `SKILL.md` explicitly. To reuse them in another repository, copy the complete skill folder into that repository's `.agents/skills/`. These files are repository-local skills, not globally installed ChatGPT plugins.
