@@ -40,7 +40,7 @@ The secondary-page illustrative workspace image is from [Unsplash](https://unspl
 
 Repository: public `RikardEkstam/rikardekstam-site`; branch `main`, as created by the owner. The initial Vercel releases were uploaded directly; a Git push does not by itself establish automatic deployments. To enable them, connect this repo to the existing Vercel project with the Astro preset, Node 24, install command `npm ci`, build command `npm run build`, output `dist`. Once connected and configured, non-main branches can create previews and main can publish the temporary production address.
 
-The Actions workflow runs type checks, static build and isolated content integration tests. Configure its `verify` check as required on main when repository settings are available. Verify the Vercel Git connection before relying on automatic deployments; no deployment token belongs in this repo.
+The Actions workflow runs type checks, a static build, isolated content integration tests and Chromium browser tests. Configure its `verify` check as required on main when repository settings are available. Verify the Vercel Git connection before relying on automatic deployments; no deployment token belongs in this repo.
 
 Default build settings: `SITE_URL=https://rikardekstam-site.vercel.app`, `SITE_INDEXABLE=false`. Set `SITE_URL` to the actual assigned project alias if it differs. Leave previews unindexed. Noindex controls search indexing, not access; do not put private content in a public build.
 
@@ -56,7 +56,9 @@ Default build settings: `SITE_URL=https://rikardekstam-site.vercel.app`, `SITE_I
 
 `npm run verify` checks types and static generation, then builds an isolated temporary content fixture: a published project/article/update, draft entries, draft-project dependencies and an invalid reference. Fixtures never enter the deployable source content or the final build.
 
-`npm run build && npm run test:browser` checks navigation, responsive overflow, image loading, keyboard access and WCAG A/AA issues against the built site using a temporary local HTTP fixture. Set `PREVIEW_URL=https://your-preview.example` to check a deployed site instead. Local managed preview uses `sites-preview start /workspace/rikardekstam-site`; reuse its exact URL. Browser checks use the installed Chromium when `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` is set.
+Run `npx playwright install chromium` once, then `npm run test:browser`. The suite builds and serves two temporary sites: a design preview and an indexable production build with a sample project, article and update. Both check navigation, responsive overflow, image loading, keyboard access and WCAG A/AA issues. The production tests also follow the project log and article contents and verify code copying.
+
+Use `npm run test:browser -- --project=preview` or `--project=production` to run one mode. Set `PREVIEW_URL` to a deployed design preview to test it instead of building locally. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to use an existing Chromium-based browser.
 
 ## Reusable agent skills
 
