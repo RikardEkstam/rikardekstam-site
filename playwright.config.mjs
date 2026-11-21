@@ -4,8 +4,10 @@ export default defineConfig({
 	testDir: "./tests/browser",
 	workers: 1,
 	timeout: 30000,
+	projects: process.env.PREVIEW_URL
+		? [{ name: "preview" }]
+		: [{ name: "preview" }, { name: "production" }],
 	use: {
-		baseURL: process.env.PREVIEW_URL,
 		browserName: "chromium",
 		launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
 			? {
