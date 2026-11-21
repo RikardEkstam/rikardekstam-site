@@ -1,13 +1,84 @@
 ---
-import { render } from 'astro:content';
-import Base from '../../layouts/Base.astro';
-import { publishedContent, formatDate } from '../../lib/content';
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { publishedContent, formatDate } from "../../lib/content";
 export async function getStaticPaths() {
   const { projects, updates, journal } = await publishedContent();
-  return projects.map(project => ({ params: { slug: project.id }, props: { project, updates: updates.filter(u => u.data.project.id === project.id), articles: journal.filter(a => a.data.project?.id === project.id) } }));
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: {
+      project,
+      updates: updates.filter((u) => u.data.project.id === project.id),
+      articles: journal.filter((a) => a.data.project?.id === project.id),
+    },
+  }));
 }
 const { project, updates, articles } = Astro.props;
 const { Content } = await render(project);
-const renderedUpdates = await Promise.all(updates.map(async entry => ({ entry, ...(await render(entry)) })));
+const renderedUpdates = await Promise.all(
+  updates.map(async (entry) => ({ entry, ...(await render(entry)) })),
+);
 ---
-<Base title={project.data.title} description={project.data.description}><div class="page-wrap interior"><a class="back-link" href="/projects/">← All projects</a><header class="page-intro"><p class="eyebrow">{project.data.status}</p><h1 class="content-title">{project.data.title}</h1><p class="lead">{project.data.description}</p><div class="tags">{project.data.tags.map(tag => <span>{tag}</span>)}</div><div class="project-links">{project.data.links.map(link => <a class="button secondary" href={link.url}>{link.label} ↗</a>)}</div></header>{project.data.image && <img class="project-cover" src={project.data.image} alt={project.data.imageAlt} width="1200" height="750" />}<div class="prose"><Content /></div>{renderedUpdates.length > 0 && <section class="project-log"><h2>Project log</h2>{renderedUpdates.map(({ entry, Content: Update }) => <article id={`update-${entry.id}`} class="log-entry"><time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time><h3>{entry.data.title}</h3><div class="prose"><Update /></div></article>)}</section>}{articles.length > 0 && <section class="project-log"><h2>Related articles</h2>{articles.map(article => <p><a class="text-link" href={`/journal/${article.id}/`}>{article.data.title} ↗</a></p>)}</section>}</div></Base>
+
+<Base title={project.data.title} description={project.data.description}>
+  <div class="page-wrap interior">
+    <a class="back-link" href="/projects/">
+      ← All projects
+    </a>
+    <header class="page-intro">
+      <p class="eyebrow">{project.data.status}</p>
+      <h1 class="content-title">{project.data.title}</h1>
+      <p class="lead">{project.data.description}</p>
+      <div class="tags">
+        {project.data.tags.map((tag) => (
+          <span>{tag}</span>
+        ))}
+      </div>
+      <div class="project-links">
+        {project.data.links.map((link) => (
+          <a class="button secondary" href={link.url}>
+            {link.label} ↗
+          </a>
+        ))}
+      </div>
+    </header>
+    {project.data.image && (
+      <img
+        class="project-cover"
+        src={project.data.image}
+        alt={project.data.imageAlt}
+        width="1200"
+        height="750"
+      />
+    )}
+    <div class="prose">
+      <Content />
+    </div>
+    {renderedUpdates.length > 0 && (
+      <section class="project-log">
+        <h2>Project log</h2>
+        {renderedUpdates.map(({ entry, Content: Update }) => (
+          <article id={`update-${entry.id}`} class="log-entry">
+            <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+            <h3>{entry.data.title}</h3>
+            <div class="prose">
+              <Update />
+            </div>
+          </article>
+        ))}
+      </section>
+    )}
+    {articles.length > 0 && (
+      <section class="project-log">
+        <h2>Related articles</h2>
+        {articles.map((article) => (
+          <p>
+            <a class="text-link" href={`/journal/${article.id}/`}>
+              {article.data.title} ↗
+            </a>
+          </p>
+        ))}
+      </section>
+    )}
+  </div>
+</Base>

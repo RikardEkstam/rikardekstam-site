@@ -1,29 +1,87 @@
 ---
-import { render } from 'astro:content';
-import Base from '../../layouts/Base.astro';
-import { publishedContent, formatDate } from '../../lib/content';
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { publishedContent, formatDate } from "../../lib/content";
 export async function getStaticPaths() {
   const { journal } = await publishedContent();
-  return journal.map(article => ({ params: { slug: article.id }, props: { article } }));
+  return journal.map((article) => ({ params: { slug: article.id }, props: { article } }));
 }
 const { article } = Astro.props;
 const { Content, headings } = await render(article);
-const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
-<Base title={article.data.title} description={article.data.description} article date={article.data.date}><div class="page-wrap interior"><a class="back-link" href="/journal/">← All notes</a><header class="page-intro article-intro"><p class="eyebrow">JOURNAL / <time datetime={article.data.date.toISOString()}>{formatDate(article.data.date)}</time></p><h1 class="content-title">{article.data.title}</h1><p class="lead">{article.data.description}</p><p class="muted">By Rikard Ekstam{article.data.updated && ` · Updated ${formatDate(article.data.updated)}`}</p><div class="tags">{article.data.tags.map(tag => <span>{tag}</span>)}</div></header><div class="article-grid"><article class="prose article-body"><Content />{article.data.project && <p><a href={`/projects/${article.data.project.id}/`}>Explore the related project →</a></p>}</article>{toc.length > 0 && <aside class="toc"><nav aria-label="Table of contents"><p class="eyebrow">ON THIS PAGE</p><ol>{toc.map(h => <li class:list={{ nested: h.depth === 3 }}><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol></nav></aside>}</div></div></Base>
+
+<Base
+  title={article.data.title}
+  description={article.data.description}
+  article
+  date={article.data.date}
+>
+  <div class="page-wrap interior">
+    <a class="back-link" href="/journal/">
+      ← All notes
+    </a>
+    <header class="page-intro article-intro">
+      <p class="eyebrow">
+        JOURNAL /{" "}
+        <time datetime={article.data.date.toISOString()}>{formatDate(article.data.date)}</time>
+      </p>
+      <h1 class="content-title">{article.data.title}</h1>
+      <p class="lead">{article.data.description}</p>
+      <p class="muted">
+        By Rikard Ekstam{article.data.updated && ` · Updated ${formatDate(article.data.updated)}`}
+      </p>
+      <div class="tags">
+        {article.data.tags.map((tag) => (
+          <span>{tag}</span>
+        ))}
+      </div>
+    </header>
+    <div class="article-grid">
+      <article class="prose article-body">
+        <Content />
+        {article.data.project && (
+          <p>
+            <a href={`/projects/${article.data.project.id}/`}>Explore the related project →</a>
+          </p>
+        )}
+      </article>
+      {toc.length > 0 && (
+        <aside class="toc">
+          <nav aria-label="Table of contents">
+            <p class="eyebrow">ON THIS PAGE</p>
+            <ol>
+              {toc.map((h) => (
+                <li class:list={{ nested: h.depth === 3 }}>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </aside>
+      )}
+    </div>
+  </div>
+</Base>
 <script>
-  document.querySelectorAll('pre').forEach(pre => {
-    const code = pre.querySelector('code');
+  document.querySelectorAll("pre").forEach((pre) => {
+    const code = pre.querySelector("code");
     if (!code) return;
-    const button = document.createElement('button');
-    button.className = 'copy-code';
-    button.textContent = 'Copy';
-    button.setAttribute('aria-label', 'Copy code');
-    button.setAttribute('aria-live', 'polite');
-    button.addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(code.textContent || ''); button.textContent = 'Copied'; }
-      catch { button.textContent = 'Select code to copy'; }
-      setTimeout(() => { button.textContent = 'Copy'; }, 2000);
+    const button = document.createElement("button");
+    button.className = "copy-code";
+    button.textContent = "Copy";
+    button.setAttribute("aria-label", "Copy code");
+    button.setAttribute("aria-live", "polite");
+    button.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(code.textContent || "");
+        button.textContent = "Copied";
+      } catch {
+        button.textContent = "Select code to copy";
+      }
+      setTimeout(() => {
+        button.textContent = "Copy";
+      }, 2000);
     });
     pre.append(button);
   });

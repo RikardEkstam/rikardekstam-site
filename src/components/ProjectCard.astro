@@ -1,9 +1,27 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-interface Props { project: CollectionEntry<'projects'> }
+import type { CollectionEntry } from "astro:content";
+interface Props {
+  project: CollectionEntry<"projects">;
+}
 const { project } = Astro.props;
 ---
+
 <a class="project-card" href={`/projects/${project.id}/`}>
-  {project.data.image && <img src={project.data.image} alt={project.data.imageAlt} width="640" height="400" loading="lazy" />}
-  <div class="project-body"><span class="eyebrow">{project.data.status}</span><h3>{project.data.title}</h3><p>{project.data.description}</p><span class="text-link">Explore project <span aria-hidden="true">↗</span></span></div>
+  {project.data.image && (
+    <img
+      src={project.data.image}
+      alt={project.data.imageAlt}
+      width="640"
+      height="400"
+      loading="lazy"
+    />
+  )}
+  <div class="project-body">
+    <span class="eyebrow">{project.data.status}</span>
+    <h3>{project.data.title}</h3>
+    <p>{project.data.description}</p>
+    <span class="text-link">
+      Explore project <span aria-hidden="true">↗</span>
+    </span>
+  </div>
 </a>

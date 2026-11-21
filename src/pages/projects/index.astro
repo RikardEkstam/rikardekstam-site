@@ -1,7 +1,38 @@
 ---
-import Base from '../../layouts/Base.astro';
-import ProjectCard from '../../components/ProjectCard.astro';
-import { publishedContent } from '../../lib/content';
+import Base from "../../layouts/Base.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import { publishedContent } from "../../lib/content";
 const { projects } = await publishedContent();
 ---
-<Base title="Projects" noindex={!projects.length}><div class="page-wrap interior"><header class="page-intro"><p class="eyebrow">IDEAS INTO REAL THINGS</p><h1>THE<br /><span>PROJECTS.</span></h1><p class="lead">Experiments, works in progress, and things out in the world.</p></header>{projects.length ? <div class="project-grid">{projects.map(project => <ProjectCard project={project} />)}</div> : <div class="empty-state"><h2>The work starts here.</h2><p>I’m putting together the first project stories. In the meantime, take a look at what’s on the workbench.</p><a class="button primary" href="/now/">On the workbench <span aria-hidden="true">↗</span></a></div>}</div></Base>
+
+<Base title="Projects" noindex={!projects.length}>
+  <div class="page-wrap interior">
+    <header class="page-intro">
+      <p class="eyebrow">IDEAS INTO REAL THINGS</p>
+      <h1>
+        THE
+        <br />
+        <span>PROJECTS.</span>
+      </h1>
+      <p class="lead">Experiments, works in progress, and things out in the world.</p>
+    </header>
+    {projects.length ? (
+      <div class="project-grid">
+        {projects.map((project) => (
+          <ProjectCard project={project} />
+        ))}
+      </div>
+    ) : (
+      <div class="empty-state">
+        <h2>The work starts here.</h2>
+        <p>
+          I’m putting together the first project stories. In the meantime, take a look at what’s on
+          the workbench.
+        </p>
+        <a class="button primary" href="/now/">
+          On the workbench <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    )}
+  </div>
+</Base>

@@ -1,6 +1,41 @@
 ---
-import Base from '../../layouts/Base.astro';
-import { publishedContent, formatDate } from '../../lib/content';
+import Base from "../../layouts/Base.astro";
+import { publishedContent, formatDate } from "../../lib/content";
 const { journal } = await publishedContent();
 ---
-<Base title="Journal" noindex={!journal.length}><div class="page-wrap interior"><header class="page-intro"><p class="eyebrow">NOTES FROM THE PROCESS</p><h1>THE<br /><span>JOURNAL.</span></h1><p class="lead">Experiments, useful discoveries, and lessons along the way.</p></header>{journal.length ? <div class="journal-list">{journal.map(article => <a href={`/journal/${article.id}/`}><time datetime={article.data.date.toISOString()}>{formatDate(article.data.date)}</time><div><h2>{article.data.title}</h2><p>{article.data.description}</p></div><span aria-hidden="true">↗</span></a>)}</div> : <div class="empty-state"><h2>A place for the useful bits.</h2><p>The first notes are still taking shape. Here’s what I’m working on in the meantime.</p><a class="button primary" href="/now/">On the workbench ↗</a></div>}</div></Base>
+
+<Base title="Journal" noindex={!journal.length}>
+  <div class="page-wrap interior">
+    <header class="page-intro">
+      <p class="eyebrow">NOTES FROM THE PROCESS</p>
+      <h1>
+        THE
+        <br />
+        <span>JOURNAL.</span>
+      </h1>
+      <p class="lead">Experiments, useful discoveries, and lessons along the way.</p>
+    </header>
+    {journal.length ? (
+      <div class="journal-list">
+        {journal.map((article) => (
+          <a href={`/journal/${article.id}/`}>
+            <time datetime={article.data.date.toISOString()}>{formatDate(article.data.date)}</time>
+            <div>
+              <h2>{article.data.title}</h2>
+              <p>{article.data.description}</p>
+            </div>
+            <span aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="empty-state">
+        <h2>A place for the useful bits.</h2>
+        <p>The first notes are still taking shape. Here’s what I’m working on in the meantime.</p>
+        <a class="button primary" href="/now/">
+          On the workbench ↗
+        </a>
+      </div>
+    )}
+  </div>
+</Base>
